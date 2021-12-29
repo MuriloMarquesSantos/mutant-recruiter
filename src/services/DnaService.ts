@@ -8,9 +8,11 @@ export default class DnaService {
         const diagonalSearcher = new DiagonalSearcher();
         let dnaMatchCounter = 0;
         const joinDnaSequence = testDna.join('');
-        const horizontalMatchCounter = this.analyzeDnaHorizontally(joinDnaSequence);
+        const horizontalMatchCounter = this.analyzeDnaHorizontally(testDna);
         const verticalMatchCounter = this.analyzeDnaVertically(testDna);
         const diagonalMatchCounter = diagonalSearcher.searchDiagonally(testDna);
+
+        // console.log("Parent", horizontalMatchCounter, verticalMatchCounter, diagonalMatchCounter)
 
         dnaMatchCounter = horizontalMatchCounter + verticalMatchCounter + diagonalMatchCounter;
         if (dnaMatchCounter >= this.MATCH_DNA_SEQUENCE_TARGET) {
@@ -19,15 +21,23 @@ export default class DnaService {
         return false;
     }
 
-    private analyzeDnaHorizontally(joinDnaSequence: string): number {
+    private analyzeDnaHorizontally(testDna: string[]): number {
+        const dnaSequenceRowLength = testDna[0].length;
+        const joinDnaSequence = testDna.join('');
         let dnaMatchLetterCounter = 0;
         let dnaSequenceMatchCounter = 0;
 
         for (let index = 1; index < joinDnaSequence.length; index++) {
+            
             const currentDnaLetter = joinDnaSequence[index];
             const previousDnaLetter = joinDnaSequence[index - 1];
 
-            dnaMatchLetterCounter = this.retrieveDnaLetterMatch(currentDnaLetter, previousDnaLetter, dnaMatchLetterCounter); 
+            dnaMatchLetterCounter = this.retrieveDnaLetterMatch(currentDnaLetter, previousDnaLetter, dnaMatchLetterCounter);
+            
+            const isNewLine = index % dnaSequenceRowLength === 0;
+            if (isNewLine) {
+                dnaMatchLetterCounter = 0;
+            }
             
             if (dnaMatchLetterCounter === this.MATCH_DNA_LETTER_TARGET) {
                 dnaSequenceMatchCounter++;
@@ -50,15 +60,13 @@ export default class DnaService {
     private analyzeDnaVertically(testDna: string[]): number {
         const dnaSequenceRowLength = testDna[0].length;
         const joinDnaSequence = testDna.join('');
-        const dnaSequenceDepth = (dnaSequenceRowLength * dnaSequenceRowLength);
         let dnaMatchLetterCounter = 0;
         let dnaSequenceMatchCounter = 0; 
 
-        for (let index = 0; index < dnaSequenceRowLength; index++) {
-            for (let index2 = index + dnaSequenceRowLength; index2 <= dnaSequenceDepth + index; index2+=dnaSequenceRowLength) {
-                const currentDnaLetter = joinDnaSequence[index2];
-                const previousDnaLetter = joinDnaSequence[index2 - dnaSequenceRowLength]; 
-
+        for (let controlIndex = 0; controlIndex < dnaSequenceRowLength; controlIndex++) {
+            for (let index = controlIndex + dnaSequenceRowLength, counter = 0; counter < dnaSequenceRowLength - 1; index+=dnaSequenceRowLength, counter++) {
+                const currentDnaLetter = joinDnaSequence[index];
+                const previousDnaLetter = joinDnaSequence[index - dnaSequenceRowLength]; 
                 dnaMatchLetterCounter = this.retrieveDnaLetterMatch(currentDnaLetter, previousDnaLetter, dnaMatchLetterCounter); 
 
                 if (dnaMatchLetterCounter === this.MATCH_DNA_LETTER_TARGET) {
