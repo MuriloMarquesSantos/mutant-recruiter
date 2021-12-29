@@ -57,8 +57,8 @@ describe('DnaService', () => {
         expect(isMutantDna).toBe(true); 
     });
 
-    it('should detect a mutant given a DNA that contains multiple side-left diagonal matches', () => {
-        const testDna = ["ATTTTA","CAATGC","TTTGGT","ATGAGA","CGAATC","TCACTT"];
+    it('should detect a mutant given a DNA that contains multiple top-right diagonal matches', () => {
+        const testDna = ["ATTTAA","TAATGT","TCAGTT","ATCATA","CGCCTC","TCTCTT"];
         const dnaService = new DnaService();
         const isMutantDna = dnaService.isMutant(testDna);
 
