@@ -1,14 +1,15 @@
 export default class DnaService {
     MATCH_DNA_SEQUENCE_TARGET = 2;
     MATCH_DNA_LETTER_TARGET = 3;
+    // TODO -> VALIDATE CUBES SMALLER THAN 4x4.. Impossible to have mutant DNA if they have that size
     isMutant(testDna: string[]): boolean {
         let dnaMatchCounter = 0;
         const joinDnaSequence = testDna.join('');
         const horizontalMatchCounter = this.analyzeDnaHorizontally(joinDnaSequence);
         const verticalMatchCounter = this.analyzeDnaVertically(testDna);
+        const diagonalMatchCounter = this.analyzeDnaDiagolly(testDna);
 
-        dnaMatchCounter = horizontalMatchCounter + verticalMatchCounter;
-
+        dnaMatchCounter = horizontalMatchCounter + verticalMatchCounter + diagonalMatchCounter;
         if (dnaMatchCounter >= this.MATCH_DNA_SEQUENCE_TARGET) {
             return true;
         }
@@ -27,6 +28,7 @@ export default class DnaService {
             
             if (dnaMatchLetterCounter === this.MATCH_DNA_LETTER_TARGET) {
                 dnaSequenceMatchCounter++;
+                dnaMatchLetterCounter = 0;
             }
             if (dnaSequenceMatchCounter === this.MATCH_DNA_SEQUENCE_TARGET) {
                 return this.MATCH_DNA_SEQUENCE_TARGET;
@@ -43,9 +45,6 @@ export default class DnaService {
     }
 
     private analyzeDnaVertically(testDna: string[]): number {
-        //candidates
-        // O (N) -> Leitura de cada uma das verticais. N + Length a cada rodada
-        // Prestar atenção nos limites verticais
         const dnaSequenceRowLength = testDna[0].length;
         const joinDnaSequence = testDna.join('');
         const dnaSequenceDepth = (dnaSequenceRowLength * dnaSequenceRowLength);
@@ -61,6 +60,7 @@ export default class DnaService {
 
                 if (dnaMatchLetterCounter === this.MATCH_DNA_LETTER_TARGET) {
                     dnaSequenceMatchCounter++;
+                    dnaMatchLetterCounter = 0;
                 }
                 if (dnaSequenceMatchCounter === this.MATCH_DNA_SEQUENCE_TARGET) {
                     return this.MATCH_DNA_SEQUENCE_TARGET;
@@ -68,7 +68,52 @@ export default class DnaService {
             }
             dnaMatchLetterCounter = 0;
         }
+        return dnaSequenceMatchCounter;
+    }
 
+    private analyzeDnaDiagolly(testDna: string[]): number {
+        const dnaSequenceRowLength = testDna[0].length;
+        const joinDnaSequence = testDna.join('');
+        let dnaMatchLetterCounter = 0;
+        let dnaSequenceMatchCounter = 0;
+
+        let continueSearch = true;
+
+        return this.analyzeDnaFromLeftToRight(joinDnaSequence, dnaSequenceRowLength);
+        // this.analyzeDnaFromRightToLeft(joinDnaSequence, dnaSequenceRowLength);
+
+        // return 0;
+    }
+
+    private analyzeDnaFromLeftToRight(joinDnaSequence: string, dnaSequenceRowLength: number): number {
+        let dnaMatchLetterCounter = 0;
+        let dnaSequenceMatchCounter = 0;
+        let diagonalPointer = -1;
+        
+        //linha andando vertical começa em 3 e termina na última célula da linha
+            for (let controlIndex = 3; controlIndex < dnaSequenceRowLength; controlIndex++) {
+                //tem que ser exatamente em baixo - 1, na segunda -2
+                for (let index = controlIndex + (dnaSequenceRowLength + diagonalPointer); index % dnaSequenceRowLength !== 0; index += (dnaSequenceRowLength + diagonalPointer)) {
+                    const currentDnaLetter = joinDnaSequence[index];
+                    const previousDnaLetter = joinDnaSequence[(index - dnaSequenceRowLength) - diagonalPointer];
+    
+                    dnaMatchLetterCounter = this.retrieveDnaLetterMatch(currentDnaLetter, previousDnaLetter, dnaMatchLetterCounter);
+    
+                    if (dnaMatchLetterCounter === this.MATCH_DNA_LETTER_TARGET) {
+                        dnaSequenceMatchCounter++;
+                        dnaMatchLetterCounter = 0;
+                    }
+                    if (dnaSequenceMatchCounter === this.MATCH_DNA_SEQUENCE_TARGET) {
+                        return this.MATCH_DNA_SEQUENCE_TARGET;
+                    }
+                }
+                dnaMatchLetterCounter = 0;
+            }
+            console.log(dnaSequenceMatchCounter);
+        return dnaSequenceMatchCounter;
+    }
+
+    private analyzeDnaFromRightToLeft(joinDnaSequence: string, dnaSequenceRowLength: number): number {
         return 0;
     }
 }
