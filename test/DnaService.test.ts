@@ -1,4 +1,4 @@
-import DnaService from '../src/services/DnaService';
+import DnaService from '../src/domain/services/DnaService';
 
 describe('DnaService', () => {
     it('should detect a mutant given a DNA that contains multiple horizontal matches', () => {
