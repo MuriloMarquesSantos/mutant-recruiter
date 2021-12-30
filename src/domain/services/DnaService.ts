@@ -16,7 +16,6 @@ export default class DnaService {
     }
     MATCH_DNA_SEQUENCE_TARGET = 2;
     MATCH_DNA_LETTER_TARGET = 3;
-    // TODO -> VALIDATE CUBES SMALLER THAN 4x4.. Impossible to have mutant DNA if they have that size
     async isMutant(testDna: string[]): Promise<DnaResponse> {
         const joinTestDna = testDna.join('');
 
