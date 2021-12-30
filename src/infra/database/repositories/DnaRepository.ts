@@ -1,8 +1,9 @@
 import DnaModel from '../models/Dna';
 import DnaRequest from '../../../domain/dtos/DnaRequest';
-import AppError from '../../errors/AppError';
+import AppError from '../../../shared/errors/AppError';
+import IDnaRepository from './IDnaRepository';
 
-export default class DnaRepository {
+export default class DnaRepository implements IDnaRepository {
     async save(dna: DnaRequest) {
         try {
             const savedDna = await DnaModel.create(dna);

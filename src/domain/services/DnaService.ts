@@ -1,13 +1,18 @@
-import DnaRepository from "../../infra/database/repositories/DnaRepository";
+import { inject, injectable } from "tsyringe";
+import IDnaRepository from "../../infra/database/repositories/IDnaRepository";
 import DnaResponse from "../dtos/DnaResponse";
 import DnaDiagonalSearcher from "../searchers/DnaDiagonalSearcher";
 import DnaHorizontalSearcher from "../searchers/DnaHorizontalSearcher";
 import DnaVerticalSearcher from "../searchers/DnaVerticalSearcher";
 
+@injectable()
 export default class DnaService {
-    private dnaRepository: DnaRepository;
-    constructor() {
-        this.dnaRepository = new DnaRepository();
+    private dnaRepository: IDnaRepository;
+    constructor(
+        @inject('DnaRepository')
+        dnaRepository: IDnaRepository,
+    ) {
+        this.dnaRepository = dnaRepository;    
     }
     MATCH_DNA_SEQUENCE_TARGET = 2;
     MATCH_DNA_LETTER_TARGET = 3;

@@ -1,7 +1,9 @@
+import 'reflect-metadata';
 import express, { Request, Response, NextFunction } from 'express';
 import routes from './routes';
 import { connectDB } from '../database/config';
-import AppError from '../errors/AppError';
+import AppError from '../../shared/errors/AppError';
+import '../../shared/container';
 
 const PORT = process.env.PORT || 3333;
 const connectWithRetry = async() => {
