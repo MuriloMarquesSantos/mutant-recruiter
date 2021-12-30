@@ -5,7 +5,7 @@ import app from '../../../src/infra/http/routes';
 import StatsService from '../../../src/domain/services/StatsService';
 import AppError from '../../../src/shared/errors/AppError';
 
-describe("Dna Routes", () => {
+describe("Stats Routes", () => {
     afterEach(() => {
         jest.resetAllMocks();
     });

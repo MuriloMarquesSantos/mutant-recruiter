@@ -13,7 +13,6 @@ export default class DnaRepository implements IDnaRepository {
     async save(dna: DnaRequest) {
         try {
             const savedDna = await DnaModel.create(dna);
-            DnaModel.count()
             return savedDna;
         } catch(error) {
             console.error(error)
