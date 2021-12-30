@@ -15,7 +15,6 @@ export default class DnaService {
         const verticalMatchCounter = verticalSearcher.searchVertically(testDna);
         const diagonalMatchCounter = diagonalSearcher.searchDiagonally(testDna);
 
-        // console.log("Parent", horizontalMatchCounter, verticalMatchCounter, diagonalMatchCounter)
         let dnaMatchCounter = 0;
         dnaMatchCounter = horizontalMatchCounter + verticalMatchCounter + diagonalMatchCounter;
         if (dnaMatchCounter >= this.MATCH_DNA_SEQUENCE_TARGET) {

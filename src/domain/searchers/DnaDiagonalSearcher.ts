@@ -13,8 +13,6 @@ export default class DiagonalSearcher {
         
         dnaMatchCounter = topLeftMatchCounter + topRightMatchCounter + sideRightMatchCounter + sideLeftMatchCounter;
 
-        console.log(topLeftMatchCounter, topRightMatchCounter, sideRightMatchCounter, sideLeftMatchCounter);
-
         return dnaMatchCounter;
     }
 
