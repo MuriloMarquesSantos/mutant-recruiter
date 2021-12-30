@@ -5,8 +5,13 @@ export default class DnaController {
     public async create(request: Request, response: Response): Promise<Response> {
         const { dna } = request.body;
         const dnaService = new DnaService();
-
-        const isMutantResponse = dnaService.isMutant(dna);
-        return response.status(200).json(isMutantResponse);
+        try {
+            const isMutantResponse = await dnaService.isMutant(dna);
+            const statusCode = isMutantResponse.isMutant ? 200 : 403;
+            return response.status(statusCode).json(isMutantResponse);
+        }
+        catch (error) {
+            return response.status(500).json(error);
+        }
     }
 }
