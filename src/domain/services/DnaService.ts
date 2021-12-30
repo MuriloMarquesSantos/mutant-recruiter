@@ -25,7 +25,6 @@ export default class DnaService {
         return {
             isMutant: dnaAnalysisResponse
         }
-        
     }
 
     private async analyzeDna(testDna: string[]): Promise<boolean> {
