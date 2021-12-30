@@ -5,7 +5,7 @@ services:
       container_name: MUTANT-RECRUITER
       restart: always
       build:
-        context: '.'
+        context: .
         dockerfile: Dockerfile
       volumes:
         - ./:/mutant-recruiter
@@ -24,6 +24,7 @@ services:
     image: mongo-express
     ports:
       - 8081:8081
+    restart: always
     environment:
       ME_CONFIG_BASICAUTH_USERNAME: root
       ME_CONFIG_BASICAUTH_PASSWORD: root

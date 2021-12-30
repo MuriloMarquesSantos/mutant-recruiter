@@ -1,13 +1,14 @@
 FROM node:16-alpine
 
-WORKDIR /mutant-recruiter
+WORKDIR /usr
 
-COPY package.json /mutant-recruiter
-COPY yarn.lock /mutant-recruiter
+COPY package.json ./
+COPY yarn.lock ./
 
-RUN yarn
-COPY . /mutant-recruiter/ 
+COPY . .
 
+RUN ls -a
+RUN yarn install
 RUN yarn build
 
 EXPOSE 3333
