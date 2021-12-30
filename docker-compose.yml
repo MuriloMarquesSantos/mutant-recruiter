@@ -1,0 +1,53 @@
+version: '3'
+
+services:
+  server:
+      container_name: MUTANT-RECRUITER
+      restart: always
+      build:
+        context: '.'
+        dockerfile: Dockerfile
+      volumes:
+        - ./:/mutant-recruiter
+        - ./node_modules:/mutant-recruiter/node_modules
+      environment:
+        MONGO_INITDB_ROOT_USERNAME: root
+        MONGO_INITDB_ROOT_PASSWORD: root  
+      depends_on:
+        - mongo
+      networks:
+      - mongo-compose-network
+      ports:
+        - '3333:3333'
+
+  mongo-express:
+    image: mongo-express
+    ports:
+      - 8081:8081
+    environment:
+      ME_CONFIG_BASICAUTH_USERNAME: root
+      ME_CONFIG_BASICAUTH_PASSWORD: root
+      ME_CONFIG_MONGODB_PORT: 27017
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: root
+      ME_CONFIG_MONGODB_URL: mongodb://root:root@mongo:27017/dna?authSource=admin
+    links:
+      - mongo
+    networks:
+      - mongo-compose-network
+
+  mongo:
+    image: mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+    ports:
+      - "27017:27017"
+    volumes:
+      - /Users/murilosantos/Documents/docker-test/data
+    networks:
+      - mongo-compose-network
+
+networks: 
+    mongo-compose-network:
+      driver: bridge
