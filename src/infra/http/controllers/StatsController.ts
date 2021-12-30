@@ -1,13 +1,13 @@
 import { Request, Response } from 'express';
-import DnaService from '../../../domain/services/DnaService';
 import { container } from 'tsyringe';
+import StatsService from '../../../domain/services/StatsService';
 
 export default class StatsController {
-    public async get(request: Request, response: Response): Promise<Response> {
-        const dnaService = container.resolve(DnaService);
+    public async get(_: Request, response: Response): Promise<Response> {
+        const statsService = container.resolve(StatsService);
         try {
-
-            return response.status(200).json(response);
+            const statsResponse = await statsService.getDnaStats();
+            return response.status(200).json(statsResponse);
         }
         catch (error) {
             return response.status(500).json(error);

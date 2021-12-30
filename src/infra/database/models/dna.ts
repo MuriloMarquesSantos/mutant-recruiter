@@ -8,7 +8,8 @@ const dnaSchema: Schema = new Schema({
     },
     isMutant: {
         type: Boolean,
-        required: [true, 'IsMutant attrbiute is required']
+        required: [true, 'IsMutant attrbiute is required'],
+        index: true,
     }
 })
 
