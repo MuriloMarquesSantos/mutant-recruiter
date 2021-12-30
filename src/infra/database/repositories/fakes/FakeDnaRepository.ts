@@ -11,10 +11,13 @@ export default class FakeDnaRepository implements IDnaRepository {
     }
 
     async getCountByIsMutant(): Promise<StatsResponse> {
+        const count_mutant_dna = this.dnas.filter(dna => dna.isMutant === true).length;
+        const count_human_dna = this.dnas.filter(dna => dna.isMutant === false).length
+        const ratio = count_mutant_dna / count_human_dna;
         return {
-            count_mutant_dna: 2,
-            count_human_dna: 1,
-            ratio: 0.5,
+            count_mutant_dna,
+            count_human_dna,
+            ratio
         }
     }
 }
