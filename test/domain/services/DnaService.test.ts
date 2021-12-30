@@ -1,6 +1,6 @@
-import DnaService from '../../src/domain/services/DnaService';
-import FakeDnaRepository from '../../src/infra/database/repositories/fakes/FakeDnaRepository';
-import IDnaRepository from '../../src/infra/database/repositories/IDnaRepository';
+import DnaService from '../../../src/domain/services/DnaService';
+import FakeDnaRepository from '../../../src/infra/database/repositories/fakes/FakeDnaRepository';
+import IDnaRepository from '../../../src/infra/database/repositories/IDnaRepository';
 
 describe('DnaService', () => {
     let fakeDnaRepository: IDnaRepository;
