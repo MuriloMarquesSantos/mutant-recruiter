@@ -1,11 +1,27 @@
-import { Router } from 'express';
+import express, { Request, Response, NextFunction, Router } from 'express';
+import AppError from '../../..//shared/errors/AppError';
 
 import dnaRouter from './dna.routes';
 import statsRouter from './stats.routes';
 
-const routes = Router();
+const appRoutes = Router();
 
-routes.use(dnaRouter);
-routes.use(statsRouter);
+appRoutes.use(dnaRouter);
+appRoutes.use(statsRouter);
 
-export default routes;
+const app = express();
+app.use(express.json());
+app.use(appRoutes);
+
+app.use(
+    (error: Error, request: Request, response: Response, next: NextFunction) => {
+      if (error instanceof AppError) {
+        return response.status(error.statusCode).json({
+          status: 'error',
+          message: error.message,
+        });
+      }
+    },
+  );
+
+export default app;

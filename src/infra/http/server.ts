@@ -1,11 +1,9 @@
 import 'reflect-metadata';
-import express, { Request, Response, NextFunction } from 'express';
-import routes from './routes';
 import { connectDB } from '../database/config';
-import AppError from '../../shared/errors/AppError';
 import '../../shared/container';
-
+import app from './routes/index'
 const PORT = process.env.PORT || 3333;
+
 const connectWithRetry = async() => {
     try {
         await connectDB();
@@ -16,29 +14,7 @@ const connectWithRetry = async() => {
     }
 }
 connectWithRetry();
-const app = express();
-app.use(express.json());
-app.use(routes);
-
-
-app.use(
-    (error: Error, request: Request, response: Response, next: NextFunction) => {
-      if (error instanceof AppError) {
-        return response.status(error.statusCode).json({
-          status: 'error',
-          message: error.message,
-        });
-      }
-  
-      console.error(error);
-  
-      return response.status(500).json({
-        status: 'error',
-        message: 'Internal Server Error',
-      });
-    },
-  );
 
 app.listen(PORT, () => {
-    console.log(`Server up and running on port ${PORT}`)
+  console.log(`Server up and running on port ${PORT}`)
 });

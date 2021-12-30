@@ -10,7 +10,7 @@ export default class StatsController {
             return response.status(200).json(statsResponse);
         }
         catch (error) {
-            return response.status(500).json(error);
+            return response.status(500).json({message: (error as Error).message});
         }
     }
 }

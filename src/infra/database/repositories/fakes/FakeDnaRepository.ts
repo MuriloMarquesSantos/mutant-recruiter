@@ -1,5 +1,6 @@
 import DnaRequest from "../../../../domain/dtos/DnaRequest";
 import StatsResponse from "../../../../domain/dtos/StatsResponse";
+import AppError from "../../../../shared/errors/AppError";
 import IDnaRepository from "../IDnaRepository";
 
 export default class FakeDnaRepository implements IDnaRepository {
@@ -18,6 +19,6 @@ export default class FakeDnaRepository implements IDnaRepository {
             count_mutant_dna,
             count_human_dna,
             ratio
-        }
+        }   
     }
 }

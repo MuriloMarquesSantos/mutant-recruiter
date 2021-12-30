@@ -1,7 +1,10 @@
 import { Request, Response } from 'express';
+import { container, injectable } from 'tsyringe';
+import "reflect-metadata";
 import DnaService from '../../../domain/services/DnaService';
-import { container } from 'tsyringe';
 
+
+@injectable()
 export default class DnaController {
     public async create(request: Request, response: Response): Promise<Response> {
         const { dna } = request.body;
@@ -12,7 +15,7 @@ export default class DnaController {
             return response.status(statusCode).json(isMutantResponse);
         }
         catch (error) {
-            return response.status(500).json(error);
+            return response.status(500).json({message: (error as Error).message});
         }
     }
 }
