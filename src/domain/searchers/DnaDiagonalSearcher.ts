@@ -1,34 +1,42 @@
+import DnaSearchCounter from "./DnaSearchCounter";
+
 export default class DiagonalSearcher {
     MATCH_DNA_SEQUENCE_TARGET = 2;
     MATCH_DNA_LETTER_TARGET = 3;
-    public searchDiagonally(testDna: string[]): number {
-        const dnaSequenceRowLength = testDna[0].length;
-        const joinDnaSequence = testDna.join('');
-        let dnaMatchCounter = 0;
-        
-        const topLeftMatchCounter = this.analyzeDnaFromTopLeftToTopRight(joinDnaSequence, dnaSequenceRowLength);
-        const topRightMatchCounter = this.analyzeDnaFromTopRightToTopLeft(joinDnaSequence, dnaSequenceRowLength);
-        const sideRightMatchCounter = this.analyzeDnaFromSideRightToBottomRight(joinDnaSequence, dnaSequenceRowLength);
-        const sideLeftMatchCounter = this.analyzeDnaFromSideLeftToBottomRight(joinDnaSequence, dnaSequenceRowLength);
-        
-        dnaMatchCounter = topLeftMatchCounter + topRightMatchCounter + sideRightMatchCounter + sideLeftMatchCounter;
+    private joinDnaSequence: string;
+    private dnaSearchCounter: DnaSearchCounter;
+    private dnaSequenceRowLength: number;
 
-        return dnaMatchCounter;
+    constructor(testDna: string[]) {
+        this.joinDnaSequence = testDna.join('');
+        this.dnaSearchCounter = new DnaSearchCounter
+        this.dnaSequenceRowLength = testDna[0].length;
     }
 
-    private analyzeDnaFromTopRightToTopLeft(joinDnaSequence: string, dnaSequenceRowLength: number): number {
+    public searchDiagonally(): number {
+        const topLeftMatchCounter = this.analyzeDnaFromTopLeftToTopRight();
+        const topRightMatchCounter = this.analyzeDnaFromTopRightToTopLeft();
+        const sideRightMatchCounter = this.analyzeDnaFromSideRightToBottomRight();
+        const sideLeftMatchCounter = this.analyzeDnaFromSideLeftToBottomRight();
+        
+        this.dnaSearchCounter.dnaLineMatchCounter = topLeftMatchCounter + topRightMatchCounter + sideRightMatchCounter + sideLeftMatchCounter;
+
+        return this.dnaSearchCounter.dnaLineMatchCounter;
+    }
+
+    private analyzeDnaFromTopRightToTopLeft(): number {
         let dnaMatchLetterCounter = 0;
         let dnaSequenceMatchCounter = 0;
         let diagonalPointer = -1;
         let didNotHitTheLeftEdge = true;
         
         //linha andando vertical começa em 3 e termina na última célula da linha
-        for (let controlIndex = 3; controlIndex < dnaSequenceRowLength; controlIndex++) {
-            for (let index = controlIndex + (dnaSequenceRowLength + diagonalPointer); didNotHitTheLeftEdge; index += (dnaSequenceRowLength + diagonalPointer)) {
+        for (let controlIndex = 3; controlIndex < this.dnaSequenceRowLength; controlIndex++) {
+            for (let index = controlIndex + (this.dnaSequenceRowLength + diagonalPointer); didNotHitTheLeftEdge; index += (this.dnaSequenceRowLength + diagonalPointer)) {
 
-                didNotHitTheLeftEdge = index % dnaSequenceRowLength !== 0;
-                const currentDnaLetter = joinDnaSequence[index];
-                const previousDnaLetter = joinDnaSequence[(index - dnaSequenceRowLength) - diagonalPointer];
+                didNotHitTheLeftEdge = index % this.dnaSequenceRowLength !== 0;
+                const currentDnaLetter = this.joinDnaSequence[index];
+                const previousDnaLetter = this.joinDnaSequence[(index - this.dnaSequenceRowLength) - diagonalPointer];
 
                 dnaMatchLetterCounter = this.retrieveDnaLetterMatch(currentDnaLetter, previousDnaLetter, dnaMatchLetterCounter);
 
@@ -47,18 +55,18 @@ export default class DiagonalSearcher {
         return dnaSequenceMatchCounter;
     }
 
-    private analyzeDnaFromTopLeftToTopRight(joinDnaSequence: string, dnaSequenceRowLength: number): number {
+    private analyzeDnaFromTopLeftToTopRight(): number {
         let dnaMatchLetterCounter = 0;
         let dnaSequenceMatchCounter = 0;
         let diagonalPointer = +1;
         let didNotHitTheRightEdge = true;
         
         //linha andando vertical começa em length - 3 e termina na última célula da linha esquerda
-        for (let controlIndex = dnaSequenceRowLength - 3; controlIndex >= 0; controlIndex--) {
-            for (let index = controlIndex + (dnaSequenceRowLength + diagonalPointer); didNotHitTheRightEdge; index += (dnaSequenceRowLength + diagonalPointer)) {
-                didNotHitTheRightEdge = index % dnaSequenceRowLength !== dnaSequenceRowLength - 1;
-                const currentDnaLetter = joinDnaSequence[index];
-                const previousDnaLetter = joinDnaSequence[(index - dnaSequenceRowLength) - diagonalPointer];
+        for (let controlIndex = this.dnaSequenceRowLength - 3; controlIndex >= 0; controlIndex--) {
+            for (let index = controlIndex + (this.dnaSequenceRowLength + diagonalPointer); didNotHitTheRightEdge; index += (this.dnaSequenceRowLength + diagonalPointer)) {
+                didNotHitTheRightEdge = index % this.dnaSequenceRowLength !== this.dnaSequenceRowLength - 1;
+                const currentDnaLetter = this.joinDnaSequence[index];
+                const previousDnaLetter = this.joinDnaSequence[(index - this.dnaSequenceRowLength) - diagonalPointer];
 
                 dnaMatchLetterCounter = this.retrieveDnaLetterMatch(currentDnaLetter, previousDnaLetter, dnaMatchLetterCounter);
 
@@ -77,20 +85,20 @@ export default class DiagonalSearcher {
         return dnaSequenceMatchCounter;
     }
 
-    private analyzeDnaFromSideRightToBottomRight(joinDnaSequence: string, dnaSequenceRowLength: number): number {
+    private analyzeDnaFromSideRightToBottomRight(): number {
         let dnaMatchLetterCounter = 0;
         let dnaSequenceMatchCounter = 0;
         let diagonalPointer = -1;
-        const DNA_SIZE = dnaSequenceRowLength * dnaSequenceRowLength;
-        const SEARCH_START = (dnaSequenceRowLength * 2) - 1;
+        const DNA_SIZE = this.dnaSequenceRowLength * this.dnaSequenceRowLength;
+        const SEARCH_START = (this.dnaSequenceRowLength * 2) - 1;
         
         //a analisa começa em (length * 2) - 1, progride. Apenas o control index deveria mudar
         // A lógica de analise deveria ser igual ao TOPRIGHT
-        for (let controlIndex = SEARCH_START; controlIndex < DNA_SIZE; controlIndex+=dnaSequenceRowLength) {
-            for (let index = controlIndex + (dnaSequenceRowLength + diagonalPointer); joinDnaSequence[index] !== undefined; index += (dnaSequenceRowLength + diagonalPointer)) {
+        for (let controlIndex = SEARCH_START; controlIndex < DNA_SIZE; controlIndex+=this.dnaSequenceRowLength) {
+            for (let index = controlIndex + (this.dnaSequenceRowLength + diagonalPointer); this.joinDnaSequence[index] !== undefined; index += (this.dnaSequenceRowLength + diagonalPointer)) {
 
-                const currentDnaLetter = joinDnaSequence[index];
-                const previousDnaLetter = joinDnaSequence[(index - dnaSequenceRowLength) - diagonalPointer];
+                const currentDnaLetter = this.joinDnaSequence[index];
+                const previousDnaLetter = this.joinDnaSequence[(index - this.dnaSequenceRowLength) - diagonalPointer];
 
                 dnaMatchLetterCounter = this.retrieveDnaLetterMatch(currentDnaLetter, previousDnaLetter, dnaMatchLetterCounter);
 
@@ -107,19 +115,19 @@ export default class DiagonalSearcher {
         return dnaSequenceMatchCounter;
     }
 
-    private analyzeDnaFromSideLeftToBottomRight(joinDnaSequence: string, dnaSequenceRowLength: number): number {
+    private analyzeDnaFromSideLeftToBottomRight(): number {
         let dnaMatchLetterCounter = 0;
         let dnaSequenceMatchCounter = 0;
         let diagonalPointer = +1;
-        const DNA_SIZE = dnaSequenceRowLength * dnaSequenceRowLength;
-        const SEARCH_LIMIT = (DNA_SIZE - dnaSequenceRowLength);
-        const SEARCH_START = dnaSequenceRowLength;
+        const DNA_SIZE = this.dnaSequenceRowLength * this.dnaSequenceRowLength;
+        const SEARCH_LIMIT = (DNA_SIZE - this.dnaSequenceRowLength);
+        const SEARCH_START = this.dnaSequenceRowLength;
 
         //linha andando vertical começa em length - 3 e termina na última célula da linha esquerda
-        for (let controlIndex = SEARCH_START; controlIndex <= SEARCH_LIMIT; controlIndex+=dnaSequenceRowLength) {
-            for (let index = controlIndex + (dnaSequenceRowLength + diagonalPointer); joinDnaSequence[index] !== undefined; index += (dnaSequenceRowLength + diagonalPointer)) {
-                const currentDnaLetter = joinDnaSequence[index];
-                const previousDnaLetter = joinDnaSequence[(index - dnaSequenceRowLength) - diagonalPointer];
+        for (let controlIndex = SEARCH_START; controlIndex <= SEARCH_LIMIT; controlIndex+=this.dnaSequenceRowLength) {
+            for (let index = controlIndex + (this.dnaSequenceRowLength + diagonalPointer); this.joinDnaSequence[index] !== undefined; index += (this.dnaSequenceRowLength + diagonalPointer)) {
+                const currentDnaLetter = this.joinDnaSequence[index];
+                const previousDnaLetter = this.joinDnaSequence[(index - this.dnaSequenceRowLength) - diagonalPointer];
 
                 dnaMatchLetterCounter = this.retrieveDnaLetterMatch(currentDnaLetter, previousDnaLetter, dnaMatchLetterCounter);
 

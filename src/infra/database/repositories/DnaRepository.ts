@@ -15,7 +15,6 @@ export default class DnaRepository implements IDnaRepository {
             const savedDna = await DnaModel.create(dna);
             return savedDna;
         } catch(error) {
-            console.error(error)
             throw new AppError("Persistence Error", 500);
         }
     }
@@ -29,7 +28,6 @@ export default class DnaRepository implements IDnaRepository {
             return this.buildStatsResponse(dbResponse);
         }
         catch (error) {
-            console.error(error)
             throw new AppError("Persistence Error", 500);
         }  
     }

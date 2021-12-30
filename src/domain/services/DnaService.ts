@@ -33,13 +33,13 @@ export default class DnaService {
     }
 
     private async analyzeDna(testDna: string[]): Promise<boolean> {
-        const diagonalSearcher = new DnaDiagonalSearcher();
+        const diagonalSearcher = new DnaDiagonalSearcher(testDna);
         const horizontalSearcher = new DnaHorizontalSearcher(testDna);
         const verticalSearcher = new DnaVerticalSearcher(testDna);
         
         const horizontalMatchCounter = horizontalSearcher.searchHorizontally();
         const verticalMatchCounter = verticalSearcher.searchVertically();
-        const diagonalMatchCounter = diagonalSearcher.searchDiagonally(testDna);
+        const diagonalMatchCounter = diagonalSearcher.searchDiagonally();
 
         let dnaMatchCounter = 0;
         dnaMatchCounter = horizontalMatchCounter + verticalMatchCounter + diagonalMatchCounter;
