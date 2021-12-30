@@ -1,36 +1,58 @@
+import DnaSearchCounter from "./DnaSearchCounter";
+
 export default class DnaVerticalSearcher {
     MATCH_DNA_SEQUENCE_TARGET = 2;
     MATCH_DNA_LETTER_TARGET = 3;
+    private joinDnaSequence: string;
+    private dnaSearchCounter: DnaSearchCounter;
+    private dnaSequenceRowLength: number;
 
-    public searchVertically(testDna: string[]): number {
-        const dnaSequenceRowLength = testDna[0].length;
-        const joinDnaSequence = testDna.join('');
-        let dnaMatchLetterCounter = 0;
-        let dnaSequenceMatchCounter = 0; 
-
-        for (let controlIndex = 0; controlIndex < dnaSequenceRowLength; controlIndex++) {
-            for (let index = controlIndex + dnaSequenceRowLength, counter = 0; counter < dnaSequenceRowLength - 1; index+=dnaSequenceRowLength, counter++) {
-                const currentDnaLetter = joinDnaSequence[index];
-                const previousDnaLetter = joinDnaSequence[index - dnaSequenceRowLength]; 
-                dnaMatchLetterCounter = this.retrieveDnaLetterMatch(currentDnaLetter, previousDnaLetter, dnaMatchLetterCounter); 
-
-                if (dnaMatchLetterCounter === this.MATCH_DNA_LETTER_TARGET) {
-                    dnaSequenceMatchCounter++;
-                    dnaMatchLetterCounter = 0;
-                }
-                if (dnaSequenceMatchCounter === this.MATCH_DNA_SEQUENCE_TARGET) {
-                    return this.MATCH_DNA_SEQUENCE_TARGET;
-                }
+    constructor(testDna: string[]) {
+        this.joinDnaSequence = testDna.join('');
+        this.dnaSearchCounter = new DnaSearchCounter
+        this.dnaSequenceRowLength = testDna[0].length;
+    }
+    
+    public searchVertically(): number {
+        for (let controlIndex = 0; controlIndex < this.dnaSequenceRowLength; controlIndex++) {
+            this.analyzeEachColumnLetter(controlIndex);
+            if (this.dnaSearchCounter.dnaLineMatchCounter === this.MATCH_DNA_SEQUENCE_TARGET) {
+                return this.MATCH_DNA_SEQUENCE_TARGET;
             }
-            dnaMatchLetterCounter = 0;
+
+            this.dnaSearchCounter.dnaLetterMatchCounter = 0;
         }
-        return dnaSequenceMatchCounter;
+        return this.dnaSearchCounter.dnaLineMatchCounter;
     }
 
-    private retrieveDnaLetterMatch(currentDnaLetter: string, previousDnaLetter:string, dnaMatchLetterCounter: number): number {
-        if (currentDnaLetter === previousDnaLetter) {
-            return dnaMatchLetterCounter + 1;
+    private analyzeEachColumnLetter(controlIndex: number) {
+        for (let index = controlIndex + this.dnaSequenceRowLength, counter = 0; counter < this.dnaSequenceRowLength - 1; index+=this.dnaSequenceRowLength, counter++) {
+            const currentDnaLetter = this.joinDnaSequence[index];
+            const previousDnaLetter = this.joinDnaSequence[index - this.dnaSequenceRowLength]; 
+            this.dnaSearchCounter = this.retrieveDnaLetterMatch(currentDnaLetter, previousDnaLetter); 
+
+            this.dnaSearchCounter = this.evaluateIsLineMatch();   
         }
-        return 0;
+    }
+
+    private retrieveDnaLetterMatch(currentDnaLetter: string, previousDnaLetter:string): DnaSearchCounter {
+        const copyDnaSearchCounter = this.dnaSearchCounter.copy();
+        if (currentDnaLetter === previousDnaLetter) {
+            copyDnaSearchCounter.dnaLetterMatchCounter+=1;
+            return copyDnaSearchCounter;
+        }
+        copyDnaSearchCounter.dnaLetterMatchCounter=0;
+        return copyDnaSearchCounter;
+    }
+
+    private evaluateIsLineMatch(): DnaSearchCounter {
+        if (this.dnaSearchCounter.dnaLetterMatchCounter === this.MATCH_DNA_LETTER_TARGET) {
+            const dnaSearchCounterCopy = this.dnaSearchCounter.copy();
+            dnaSearchCounterCopy.dnaLineMatchCounter+=1;
+            dnaSearchCounterCopy.dnaLetterMatchCounter=0;
+
+            return dnaSearchCounterCopy;
+        }
+        return this.dnaSearchCounter;
     }
 }

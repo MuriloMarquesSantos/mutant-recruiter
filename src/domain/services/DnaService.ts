@@ -7,6 +7,8 @@ import DnaVerticalSearcher from "../searchers/DnaVerticalSearcher";
 
 @injectable()
 export default class DnaService {
+    MATCH_DNA_SEQUENCE_TARGET = 2;
+    MATCH_DNA_LETTER_TARGET = 3;
     private dnaRepository: IDnaRepository;
     constructor(
         @inject('DnaRepository')
@@ -14,8 +16,7 @@ export default class DnaService {
     ) {
         this.dnaRepository = dnaRepository;    
     }
-    MATCH_DNA_SEQUENCE_TARGET = 2;
-    MATCH_DNA_LETTER_TARGET = 3;
+
     async isMutant(testDna: string[]): Promise<DnaResponse> {
         const joinTestDna = testDna.join('');
 
@@ -33,11 +34,11 @@ export default class DnaService {
 
     private async analyzeDna(testDna: string[]): Promise<boolean> {
         const diagonalSearcher = new DnaDiagonalSearcher();
-        const horizontalSearcher = new DnaHorizontalSearcher();
-        const verticalSearcher = new DnaVerticalSearcher();
+        const horizontalSearcher = new DnaHorizontalSearcher(testDna);
+        const verticalSearcher = new DnaVerticalSearcher(testDna);
         
-        const horizontalMatchCounter = horizontalSearcher.searchHorizontally(testDna);
-        const verticalMatchCounter = verticalSearcher.searchVertically(testDna);
+        const horizontalMatchCounter = horizontalSearcher.searchHorizontally();
+        const verticalMatchCounter = verticalSearcher.searchVertically();
         const diagonalMatchCounter = diagonalSearcher.searchDiagonally(testDna);
 
         let dnaMatchCounter = 0;
