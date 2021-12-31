@@ -84,8 +84,11 @@ Project
 <a id="testing"></a>
 ### Testing
 - To run the tests you will need install **Node** and **NPM/YARN**
-- After that all you have to do is run ```sh $ yarn test``` OR ```sh $ npm run test ```
+- After that, all you have to do is run ``` $ yarn test``` OR ``` $ npm run test ```
+- After you run it a coverage report will be downloaded to this path: ```coverage/lcov-report/index.html```
 
+### Testing Coverage
+![image](https://user-images.githubusercontent.com/18178861/147799243-b643121b-377e-4791-9980-25843da24821.png)
 
 <a id="postman"></a>
 ## Postman Documentation
