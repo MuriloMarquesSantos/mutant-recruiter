@@ -37,6 +37,7 @@ It is also possible to fetch Statistics to check how many mutants were already f
 <a id="reqs"></a>
 ## Requirements
 - To run the application itself, Docker and docker-compose is all you need, all the dependecies with be loaded into the container.
+- If you want to run Unit tests, please check the **Testing** session.
 
 <a id="architecture"></a>
 ## Architecture and technical Decisions
@@ -82,13 +83,9 @@ Project
 
 <a id="testing"></a>
 ### Testing
-- Unit and integrations tests, shall be ran in a separate container. Run the following commands to access it:
-```sh
-  ## During the first time, it will take longer than normal because container will download dependencies
-  $ docker-compose -f docker-compose.test.yml up --build
-```
-- After the test finishes a folder called COVERAGE will be generated in project root.
-- Open coverage/lcov-report/index.html file to check coverage visually.
+- To run the tests you will need install **Node** and **NPM/YARN**
+- After that all you have to do is run ```sh $ yarn test``` OR ```sh $ npm run test ```
+
 
 <a id="postman"></a>
 ## Postman Documentation
@@ -106,6 +103,7 @@ A system is never perfect and there is always room for improvement. Here are som
 
 - Enhance a little bit more the Clean Code inside the project. 
 - If the access to the API gets too intense, maybe a **Cache** layer could be helpful.
+- A container to run the tests.
 
 ## Support
 
