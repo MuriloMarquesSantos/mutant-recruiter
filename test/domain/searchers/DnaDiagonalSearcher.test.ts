@@ -57,4 +57,4 @@ describe('DnaDiagonalSearcher', () => {
 
         expect(dnaMatches).toBe(1);
     });
-})
+});

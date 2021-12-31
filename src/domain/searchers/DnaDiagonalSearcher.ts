@@ -142,7 +142,6 @@ export default class DiagonalSearcher {
         return 0;
     }
     
-
     private retrieveDnaLetterMatch(currentDnaLetter: string, previousDnaLetter:string, dnaMatchLetterCounter: number): number {
         if (currentDnaLetter === previousDnaLetter) {
             return dnaMatchLetterCounter + 1;
