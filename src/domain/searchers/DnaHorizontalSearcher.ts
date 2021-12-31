@@ -10,17 +10,14 @@ export default class DnaHorizontalSearcher {
 
     constructor(testDna: string[]) {
         this.joinDnaSequence = testDna.join('');
-        this.dnaSearchCounter = new DnaSearchCounter
+        this.dnaSearchCounter = new DnaSearchCounter()
         this.dnaSequenceRowLength = testDna[0].length;
     }
 
     public searchHorizontally(): number {
         for (let index = 1; index < this.joinDnaSequence.length; index++) {
-            this.analyzeEachRowLetter(index);
-
-            if (this.dnaSearchCounter.dnaLineMatchCounter === this.MATCH_DNA_SEQUENCE_TARGET) {
-                return this.MATCH_DNA_SEQUENCE_TARGET;
-            }
+            const rowResult = this.analyzeEachRowLetter(index);
+            if (rowResult !== 0) return rowResult;
         }
         return this.dnaSearchCounter.dnaLineMatchCounter;
     }
@@ -34,6 +31,11 @@ export default class DnaHorizontalSearcher {
             this.evaluateIsNewLine(index);
             
             this.dnaSearchCounter = this.evaluateIsLineMatch();
+
+            if (this.dnaSearchCounter.dnaLineMatchCounter === this.MATCH_DNA_SEQUENCE_TARGET) {
+                return this.MATCH_DNA_SEQUENCE_TARGET;
+            }
+            return 0;
     }
 
     private retrieveDnaLetterMatch(currentDnaLetter: string, previousDnaLetter:string): DnaSearchCounter {

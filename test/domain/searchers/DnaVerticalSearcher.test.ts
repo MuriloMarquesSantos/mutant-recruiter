@@ -7,7 +7,7 @@ describe('DnaVerticalSearcher', () => {
         const testDna = ["ATGCGA","CAATGC","TTATGT","AGACGA","CCAATC","TCACTT"]
         dnaSearcher = new DnaVerticalSearcher(testDna);
         const dnaMatches = dnaSearcher.searchVertically();
-
+        
         expect(dnaMatches).toBe(2); 
     });
 
