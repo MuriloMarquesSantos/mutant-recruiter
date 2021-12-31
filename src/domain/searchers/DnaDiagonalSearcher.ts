@@ -26,27 +26,11 @@ export default class DiagonalSearcher {
 
     private analyzeDnaFromTopRightToTopLeft(): number {
         const localSearchCounter = new DnaSearchCounter();
-        let diagonalPointer = -1;
         let didNotHitTheLeftEdge = true;
-        
         //Control index begins in position 3 and ends in the last cell of the row
         for (let controlIndex = 3; controlIndex < this.dnaSequenceRowLength; controlIndex++) {
-            for (let index = controlIndex + (this.dnaSequenceRowLength + diagonalPointer); didNotHitTheLeftEdge; index += (this.dnaSequenceRowLength + diagonalPointer)) {
-
-                didNotHitTheLeftEdge = index % this.dnaSequenceRowLength !== 0;
-                const currentDnaLetter = this.joinDnaSequence[index];
-                const previousDnaLetter = this.joinDnaSequence[(index - this.dnaSequenceRowLength) - diagonalPointer];
-
-                localSearchCounter.dnaLetterMatchCounter = this.retrieveDnaLetterMatch(currentDnaLetter, previousDnaLetter, localSearchCounter.dnaLetterMatchCounter);
-
-                if (localSearchCounter.dnaLetterMatchCounter === this.MATCH_DNA_LETTER_TARGET) {
-                    localSearchCounter.dnaLineMatchCounter++;
-                    localSearchCounter.dnaLetterMatchCounter = 0;
-                }
-                if (localSearchCounter.dnaLineMatchCounter === this.MATCH_DNA_SEQUENCE_TARGET) {
-                    return this.MATCH_DNA_SEQUENCE_TARGET;
-                }
-            }
+            const topRightDiagonalResult = this.analyzeEachTopRightDiagonal(controlIndex, didNotHitTheLeftEdge, localSearchCounter);
+            if (topRightDiagonalResult !== 0) return topRightDiagonalResult;
             
             didNotHitTheLeftEdge = true;
             localSearchCounter.dnaLetterMatchCounter = 0;
@@ -54,93 +38,127 @@ export default class DiagonalSearcher {
         return localSearchCounter.dnaLineMatchCounter;
     }
 
+    private analyzeEachTopRightDiagonal(controlIndex: number, didNotHitTheLeftEdge: boolean, localSearchCounter: DnaSearchCounter): number {
+        let diagonalPointer = -1;
+        for (let index = controlIndex + (this.dnaSequenceRowLength + diagonalPointer); didNotHitTheLeftEdge; index += (this.dnaSequenceRowLength + diagonalPointer)) {
+
+            didNotHitTheLeftEdge = index % this.dnaSequenceRowLength !== 0;
+            const currentDnaLetter = this.joinDnaSequence[index];
+            const previousDnaLetter = this.joinDnaSequence[(index - this.dnaSequenceRowLength) - diagonalPointer];
+
+            localSearchCounter.dnaLetterMatchCounter = this.retrieveDnaLetterMatch(currentDnaLetter, previousDnaLetter, localSearchCounter.dnaLetterMatchCounter);
+
+            if (localSearchCounter.dnaLetterMatchCounter === this.MATCH_DNA_LETTER_TARGET) {
+                localSearchCounter.dnaLineMatchCounter++;
+                localSearchCounter.dnaLetterMatchCounter = 0;
+            }
+            if (localSearchCounter.dnaLineMatchCounter === this.MATCH_DNA_SEQUENCE_TARGET) {
+                return this.MATCH_DNA_SEQUENCE_TARGET;
+            }
+        }
+        return 0;
+    }
+
     private analyzeDnaFromTopLeftToTopRight(): number {
-        let dnaMatchLetterCounter = 0;
-        let dnaSequenceMatchCounter = 0;
-        let diagonalPointer = +1;
+        const localSearchCounter = new DnaSearchCounter();
         let didNotHitTheRightEdge = true;
-        
         //linha andando vertical começa em length - 3 e termina na última célula da linha esquerda
         for (let controlIndex = this.dnaSequenceRowLength - 3; controlIndex >= 0; controlIndex--) {
-            for (let index = controlIndex + (this.dnaSequenceRowLength + diagonalPointer); didNotHitTheRightEdge; index += (this.dnaSequenceRowLength + diagonalPointer)) {
-                didNotHitTheRightEdge = index % this.dnaSequenceRowLength !== this.dnaSequenceRowLength - 1;
-                const currentDnaLetter = this.joinDnaSequence[index];
-                const previousDnaLetter = this.joinDnaSequence[(index - this.dnaSequenceRowLength) - diagonalPointer];
-
-                dnaMatchLetterCounter = this.retrieveDnaLetterMatch(currentDnaLetter, previousDnaLetter, dnaMatchLetterCounter);
-
-                if (dnaMatchLetterCounter === this.MATCH_DNA_LETTER_TARGET) {
-                    dnaSequenceMatchCounter++;
-                    dnaMatchLetterCounter = 0;
-                }
-                if (dnaSequenceMatchCounter === this.MATCH_DNA_SEQUENCE_TARGET) {
-                    return this.MATCH_DNA_SEQUENCE_TARGET;
-                }
-            }
+            const topLeftDiagonalResult = this.analyzeEachTopLeftDiagonal(controlIndex, didNotHitTheRightEdge, localSearchCounter);
+            if (topLeftDiagonalResult !== 0) return topLeftDiagonalResult;
             
             didNotHitTheRightEdge = true;
-            dnaMatchLetterCounter = 0;
+            localSearchCounter.dnaLetterMatchCounter = 0;
         }
-        return dnaSequenceMatchCounter;
+        return localSearchCounter.dnaLineMatchCounter;
+    }
+
+    private analyzeEachTopLeftDiagonal(controlIndex: number, didNotHitTheRightEdge: boolean, localSearchCounter: DnaSearchCounter) {
+        let diagonalPointer = +1;
+        for (let index = controlIndex + (this.dnaSequenceRowLength + diagonalPointer); didNotHitTheRightEdge; index += (this.dnaSequenceRowLength + diagonalPointer)) {
+            didNotHitTheRightEdge = index % this.dnaSequenceRowLength !== this.dnaSequenceRowLength - 1;
+            const currentDnaLetter = this.joinDnaSequence[index];
+            const previousDnaLetter = this.joinDnaSequence[(index - this.dnaSequenceRowLength) - diagonalPointer];
+
+            localSearchCounter.dnaLetterMatchCounter = this.retrieveDnaLetterMatch(currentDnaLetter, previousDnaLetter, localSearchCounter.dnaLetterMatchCounter);
+
+            if (localSearchCounter.dnaLetterMatchCounter === this.MATCH_DNA_LETTER_TARGET) {
+                localSearchCounter.dnaLineMatchCounter++;
+                localSearchCounter.dnaLetterMatchCounter = 0;
+            }
+            if (localSearchCounter.dnaLineMatchCounter === this.MATCH_DNA_SEQUENCE_TARGET) {
+                return this.MATCH_DNA_SEQUENCE_TARGET;
+            }
+        }
+        return 0;
     }
 
     private analyzeDnaFromSideRightToBottomRight(): number {
-        let dnaMatchLetterCounter = 0;
-        let dnaSequenceMatchCounter = 0;
-        let diagonalPointer = -1;
+        const localSearchCounter = new DnaSearchCounter();
         const DNA_SIZE = this.dnaSequenceRowLength * this.dnaSequenceRowLength;
         const SEARCH_START = (this.dnaSequenceRowLength * 2) - 1;
-        
         //a analisa começa em (length * 2) - 1, progride. Apenas o control index deveria mudar
         // A lógica de analise deveria ser igual ao TOPRIGHT
         for (let controlIndex = SEARCH_START; controlIndex < DNA_SIZE; controlIndex+=this.dnaSequenceRowLength) {
-            for (let index = controlIndex + (this.dnaSequenceRowLength + diagonalPointer); this.joinDnaSequence[index] !== undefined; index += (this.dnaSequenceRowLength + diagonalPointer)) {
-
-                const currentDnaLetter = this.joinDnaSequence[index];
-                const previousDnaLetter = this.joinDnaSequence[(index - this.dnaSequenceRowLength) - diagonalPointer];
-
-                dnaMatchLetterCounter = this.retrieveDnaLetterMatch(currentDnaLetter, previousDnaLetter, dnaMatchLetterCounter);
-
-                if (dnaMatchLetterCounter === this.MATCH_DNA_LETTER_TARGET) {
-                    dnaSequenceMatchCounter++;
-                    dnaMatchLetterCounter = 0;
-                }
-                if (dnaSequenceMatchCounter === this.MATCH_DNA_SEQUENCE_TARGET) {
-                    return this.MATCH_DNA_SEQUENCE_TARGET;
-                }
-            }  
-            dnaMatchLetterCounter = 0;
+            const sideRightDiagonalResult = this.analyzeEachSideRightDiagonal(controlIndex, localSearchCounter);
+            if (sideRightDiagonalResult !== 0) return sideRightDiagonalResult;
+            localSearchCounter.dnaLetterMatchCounter = 0;
         }
-        return dnaSequenceMatchCounter;
+        return localSearchCounter.dnaLineMatchCounter;
+    }
+
+    private analyzeEachSideRightDiagonal(controlIndex: number, localSearchCounter: DnaSearchCounter): number {
+        let diagonalPointer = -1;
+        for (let index = controlIndex + (this.dnaSequenceRowLength + diagonalPointer); this.joinDnaSequence[index] !== undefined; index += (this.dnaSequenceRowLength + diagonalPointer)) {
+
+            const currentDnaLetter = this.joinDnaSequence[index];
+            const previousDnaLetter = this.joinDnaSequence[(index - this.dnaSequenceRowLength) - diagonalPointer];
+
+            localSearchCounter.dnaLetterMatchCounter = this.retrieveDnaLetterMatch(currentDnaLetter, previousDnaLetter, localSearchCounter.dnaLetterMatchCounter);
+
+            if (localSearchCounter.dnaLetterMatchCounter === this.MATCH_DNA_LETTER_TARGET) {
+                localSearchCounter.dnaLineMatchCounter++;
+                localSearchCounter.dnaLetterMatchCounter = 0;
+            }
+            if (localSearchCounter.dnaLineMatchCounter === this.MATCH_DNA_SEQUENCE_TARGET) {
+                return this.MATCH_DNA_SEQUENCE_TARGET;
+            }
+        }
+        return 0;
     }
 
     private analyzeDnaFromSideLeftToBottomRight(): number {
-        let dnaMatchLetterCounter = 0;
-        let dnaSequenceMatchCounter = 0;
-        let diagonalPointer = +1;
+        const localSearchCounter = new DnaSearchCounter();
         const DNA_SIZE = this.dnaSequenceRowLength * this.dnaSequenceRowLength;
         const SEARCH_LIMIT = (DNA_SIZE - this.dnaSequenceRowLength);
         const SEARCH_START = this.dnaSequenceRowLength;
 
         //linha andando vertical começa em length - 3 e termina na última célula da linha esquerda
         for (let controlIndex = SEARCH_START; controlIndex <= SEARCH_LIMIT; controlIndex+=this.dnaSequenceRowLength) {
-            for (let index = controlIndex + (this.dnaSequenceRowLength + diagonalPointer); this.joinDnaSequence[index] !== undefined; index += (this.dnaSequenceRowLength + diagonalPointer)) {
-                const currentDnaLetter = this.joinDnaSequence[index];
-                const previousDnaLetter = this.joinDnaSequence[(index - this.dnaSequenceRowLength) - diagonalPointer];
-
-                dnaMatchLetterCounter = this.retrieveDnaLetterMatch(currentDnaLetter, previousDnaLetter, dnaMatchLetterCounter);
-
-                if (dnaMatchLetterCounter === this.MATCH_DNA_LETTER_TARGET) {
-                    dnaSequenceMatchCounter++;
-                    dnaMatchLetterCounter = 0;
-                }
-                if (dnaSequenceMatchCounter === this.MATCH_DNA_SEQUENCE_TARGET) {
-                    return this.MATCH_DNA_SEQUENCE_TARGET;
-                }
-            }
-            dnaMatchLetterCounter = 0;
+            const sideLeftDiagonalResult = this.analyzeEachSideLeftDiagonal(controlIndex, localSearchCounter);
+            if (sideLeftDiagonalResult !== 0) return sideLeftDiagonalResult;
+            localSearchCounter.dnaLetterMatchCounter = 0;
         }
-        return dnaSequenceMatchCounter;
+        return localSearchCounter.dnaLineMatchCounter;
+    }
+
+    private analyzeEachSideLeftDiagonal(controlIndex: number, localSearchCounter: DnaSearchCounter) {
+        let diagonalPointer = +1;
+        for (let index = controlIndex + (this.dnaSequenceRowLength + diagonalPointer); this.joinDnaSequence[index] !== undefined; index += (this.dnaSequenceRowLength + diagonalPointer)) {
+            const currentDnaLetter = this.joinDnaSequence[index];
+            const previousDnaLetter = this.joinDnaSequence[(index - this.dnaSequenceRowLength) - diagonalPointer];
+
+            localSearchCounter.dnaLetterMatchCounter = this.retrieveDnaLetterMatch(currentDnaLetter, previousDnaLetter, localSearchCounter.dnaLetterMatchCounter);
+
+            if (localSearchCounter.dnaLetterMatchCounter === this.MATCH_DNA_LETTER_TARGET) {
+                localSearchCounter.dnaLineMatchCounter++;
+                localSearchCounter.dnaLetterMatchCounter = 0;
+            }
+            if (localSearchCounter.dnaLineMatchCounter === this.MATCH_DNA_SEQUENCE_TARGET) {
+                return this.MATCH_DNA_SEQUENCE_TARGET;
+            }
+        }
+        return 0;
     }
     
 
