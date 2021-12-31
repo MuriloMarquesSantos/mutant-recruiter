@@ -2,7 +2,7 @@
 import mongoose, {ConnectOptions} from 'mongoose';
 
 const connectDB = async () => {
-    const mongoUri = "mongodb://root:root@mongo:27017/dna?authSource=admin"
+    const mongoUri = process.env.MONGO_URI || "";
     try {
         const connection = await mongoose.connect(mongoUri, {
             useNewUrlParser: true,
